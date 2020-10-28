@@ -185,6 +185,7 @@ FIGURE_02 <-
     left = text_grob("ROC Score, 95% quantile", size = text_size, rot = 90),
     right = text_grob(" Proportion of peak points", size = text_size, rot = -90) )
 
+
 ggsave(
   "figures/FIGURE_02.pdf",
   FIGURE_02,

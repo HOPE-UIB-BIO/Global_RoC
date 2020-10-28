@@ -1,9 +1,7 @@
 "","REGION","start_of_increae","Mod_explained","start_of_increae_sensitivity","Mod_explained_sens"
-"1","North America","2900",0.9,2800,0.79
-"2","Latin America","2700",0.74,2800,0.61
-"3","Europe","3800",0.9,3800,0.73
-"4","Africa","Error in FUN(X[[i]], ...) : 
-  only defined on a data frame with all numeric variables
-",0.31,7000,0.22
-"5","Asia","3300",0.47,4200,0.29
-"6","Oceania","2400",0.8,2400,0.82
+"1","North America",2900,0.86,1800,0.76
+"2","Latin America",2700,0.72,3000,0.58
+"3","Europe",3600,0.87,3000,0.66
+"4","Africa",2200,0.47,2400,0.29
+"5","Asia",3500,0.43,4600,0.28
+"6","Oceania",2600,0.86,2400,0.84

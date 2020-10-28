@@ -6,17 +6,22 @@ select.model <-   function(
   data,
   weights = NA) {
   
-  for (i in  seq(10, min(c(nrow(data) - 1, 100), 10)))   {
+  for (i in  seq(from=10,to= min(c(nrow(data) - 1, 100)), by=5) )    {
+    
     print(paste("trying k=", i))
-    formula_w <- paste(var_y, "~ s(", var_x, ", k=", i, ",bs='cs')")
+    
+    formula_w <- paste(var_y, "~ s(", var_x,", k=", i,",bs='cs')") #
     
     if (is.na(weights) == F) {
       data <-
         data %>%
         mutate(W = with(data, get(weights)))
       
-      data$W <- data$W / mean(data$W)
+    data$W <- (data$W / mean(data$W))+1
       
+    #data$W <- rescale(data$W, to=c(1,10))
+      
+    
     } else {
       data <-
         data %>%

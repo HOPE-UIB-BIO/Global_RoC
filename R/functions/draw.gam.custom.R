@@ -1,4 +1,4 @@
-draw.gam <- function(data,
+draw.gam.custom <- function(data,
                      pred_gam_up,
                      pred_gam_pk,
                      region,

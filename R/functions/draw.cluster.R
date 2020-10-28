@@ -158,7 +158,7 @@ draw.cluster <-  function(region, cluster_method, distance) {
     mutate(Plot = purrr::pmap(
       list(data, pred_gam_ROC_upq, pred_gam_ROC_PEAK, C_char),
       .f = function(x, y, z, u) {
-        plot_res = draw.gam(
+        plot_res = draw.gam.custom(
           x, y, z,
           region = as.character(u),
           siluete = F,

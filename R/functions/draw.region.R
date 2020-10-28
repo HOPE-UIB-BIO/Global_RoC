@@ -20,7 +20,7 @@ draw.region <-  function(region,
     select.model(
       var_y = "ROC_upq",
       var_x = "BIN",
-      family = "Gamma()",
+      family = "tw()",
       data = data_w_sum,
       weights = "N_samples"
     )
@@ -44,7 +44,7 @@ draw.region <-  function(region,
                                        deriv = T)
   
   p_fin <- 
-    draw.gam(
+    draw.gam.custom(
       data = data_w_sum,
       pred_gam_up = pred_gam_upq,
       pred_gam_pk = pred_gam_PEAK,
