@@ -46,8 +46,8 @@ age_treshold <-  20e3
 ROC_treshold <-  2 
 text_size <-  7
 TIME_BIN <-  500
-cluster_method <-  "ward.D"
-distance <-  "manhattan"
+cluster_method <-  "mcquitty"
+distance <-  "canberra"
 
 #----------------------------------------------------------#
 # 3. Estimate patterns per continent -----
@@ -133,12 +133,12 @@ EUROASIA_curves  <-
                                  C_comb),
                             .f=function(x,y,z,u){ 
                               plot_res  <-   
-                                draw.gam(x,y,z,
-                                              region =as.character(u),
-                                              siluete = F,
-                                              palette_x = Palette_Euroasia,
-                                              deriv = T,
-                                              y_cut=1.75)
+                                draw.gam.custom(x,y,z,
+                                                region =as.character(u),
+                                                siluete = F,
+                                                palette_x = Palette_Euroasia,
+                                                deriv = T,
+                                                y_cut=1.75)
                               return(plot_res)
                             }))
 
@@ -146,7 +146,7 @@ EUROASIA_curve_plot  <-
   ggarrange(
     plotlist = EUROASIA_curves$Plot,
     ncol= 3,
-    nrow = 4,
+    nrow = 3,
     labels = LETTERS[1:nrow(EUROASIA_curves)],
     font.label = list(size=text_size))
 
@@ -154,7 +154,7 @@ ggsave(
   "figures/FIGURE_03_B.pdf",
   EUROASIA_curve_plot,
   width = 12,
-  height = 12,
+  height = 9,
   units = "cm")
 
 #----------------------------------------------------------#
@@ -273,7 +273,7 @@ AMERICAS_curves <-
     pred_gam_ROC_PEAK,
     C_comb),
     .f=function(x,y,z,u){
-      plot_res = draw.gam(x,y,z,
+      plot_res = draw.gam.custom(x,y,z,
                                region =as.character(u),
                                siluete = F,
                                palette_x = Palette_Americas,
@@ -286,7 +286,7 @@ AMERICAS_curve_plot <-
   ggarrange(
     plotlist = AMERICAS_curves$Plot,
     ncol= 3,
-    nrow = 4,
+    nrow = 2,
     labels = LETTERS[1:nrow(EUROASIA_curves)],
     font.label = list(size=text_size))
 
@@ -294,7 +294,7 @@ ggsave(
   "figures/FIGURE_04_B.pdf",
   AMERICAS_curve_plot,
   width = 12,
-  height = 12, 
+  height = 6, 
   units = "cm")
 
 #----------------------------------------------------------#
