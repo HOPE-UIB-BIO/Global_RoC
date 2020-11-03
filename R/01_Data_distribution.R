@@ -253,7 +253,7 @@ fig_env_2 <-
   scale_y_continuous(breaks = seq(-12, 3, 3), limits = c(-12, 3)) +
   coord_flip(xlim =  c(20e3, -3e3)) +
   labs(x = "Age (ka)",
-       y = expression(paste("GRIP δ" ^ 18, "O", " (‰)", sep = ""))) +
+       y = expression(paste("δ" ^ 18, "O", " (‰)", sep = ""))) +
   theme_bw() +
   theme(
     text = element_text(size = text_size),
@@ -280,7 +280,7 @@ fig_env_3 <-
   coord_flip(xlim = c(20e3, -3e3),
              ylim = c(180, 300)) +
   labs(x = "Age (ka)",
-       y = expression(paste("CO"[2], " (ppm)"))) +
+       y = expression(paste("CO"[2], " (ppmv)"))) +
   theme_bw() +
   theme(
     text = element_text(size = text_size),

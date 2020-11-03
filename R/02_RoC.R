@@ -181,7 +181,7 @@ FIGURE_02 <-
     labels = c("A", "B", "C", "D", "E", "F"),
     font.label = list(size = text_size) ) %>%
   annotate_figure(
-    bottom = text_grob("Age (ka yr BP) ", size = text_size),
+    bottom = text_grob("Age (ka) ", size = text_size),
     left = text_grob("ROC Score, 95% quantile", size = text_size, rot = 90),
     right = text_grob(" Proportion of peak points", size = text_size, rot = -90) )
 
@@ -270,7 +270,7 @@ FIGURE_S01 <- ggarrange(
   labels = c("A", "B", "C", "D", "E", "F"),
   font.label = list(size = text_size) ) %>%
   annotate_figure(
-    bottom = text_grob("Age (ka yr BP) ", size = text_size),
+    bottom = text_grob("Age (ka) ", size = text_size),
     left = text_grob("ROC Score, 95% quantile", size = text_size, rot = 90),
     right = text_grob(" Proportion of peak points", size = text_size, rot = -90) )
 
@@ -288,6 +288,7 @@ ggsave(
 #----------------------------------------------------------#
 
 TIME_BIN_sensitivity <-  250
+
 
 Data_RoC_sensitivity  <-
   Dataset_work %>%
@@ -400,7 +401,7 @@ FIGURE_S02 <-
     labels = c("A", "B", "C", "D", "E", "F"),
     font.label = list(size = text_size) ) %>%
   annotate_figure(
-    bottom = text_grob("Age (ka yr BP) ", size = text_size),
+    bottom = text_grob("Age (ka) ", size = text_size),
     left = text_grob("ROC Score, 95% quantile", size = text_size, rot = 90),
     right = text_grob(" Proportion of peak points", size = text_size, rot = -90) )
 
@@ -543,7 +544,7 @@ FIGURE_S03 <-
     labels = c("A", "B", "C", "D", "E", "F"),
     font.label = list(size = text_size) ) %>%
   annotate_figure(
-    bottom = text_grob("Age (ka yr BP) ", size = text_size),
+    bottom = text_grob("Age (ka) ", size = text_size),
     left = text_grob("ROC Score, 95% quantile", size = text_size, rot = 90),
     right = text_grob(" Proportion of peak points", size = text_size, rot = -90) )
 
@@ -560,7 +561,7 @@ ggsave(
 
 region_ROC_increase <- 
   tibble(REGION = names(pallete_1), 
-         start_of_increae = c(extract.first.increase(P_NA$data_ROC),
+         start_of_increase = c(extract.first.increase(P_NA$data_ROC),
                               extract.first.increase(P_LA$data_ROC),
                               extract.first.increase(P_EU$data_ROC),
                               try(extract.first.increase(P_Afrika$data_ROC), silent = T),
@@ -572,7 +573,7 @@ region_ROC_increase <-
                            try(extract.explained.variability(P_Afrika$model_ROC), silent = T),
                            try(extract.explained.variability(P_Asia$model_ROC), silent = T),
                            try(extract.explained.variability(P_Oceania$model_ROC), silent = T)),
-         start_of_increae_sensitivity = c(extract.first.increase(P_NA_sensitivity$data_ROC),
+         start_of_increase_sensitivity = c(extract.first.increase(P_NA_sensitivity$data_ROC),
                                           extract.first.increase(P_LA_sensitivity$data_ROC),
                                           extract.first.increase(P_EU_sensitivity$data_ROC),
                                           extract.first.increase(P_Afrika_sensitivity$data_ROC),
@@ -587,3 +588,102 @@ region_ROC_increase <-
   )
 
 write.csv(region_ROC_increase,"DATA/output/region_ROC_increase.csv")
+
+#----------------------------------------------------------#
+# 8. Figure S06: Sequence distribution -----
+#----------------------------------------------------------#
+
+x = names(pallete_1)[1]
+
+FIGURE_S06_plot_list <-
+  tibble(REGION = names(pallete_1)[c(1,3,5,2,4,6)]) %>% 
+  mutate(plot = purrr::map(REGION,
+                           .f = function(x){
+                             
+                             data_lines <- 
+                               Data_RoC %>% 
+                               filter(REGION == x)
+                             
+                             n_sites <-
+                               data_lines$dataset.id %>% 
+                               unique() %>% 
+                               length()
+                             
+                             #alpha_value <-  n_sites * 0.02
+                             
+                             data_points <-
+                               Data_RoC_sum %>% 
+                               filter(REGION == x)
+                             
+                             p_lines <-
+                               ggplot()+
+                               scale_x_continuous(
+                                 trans = "reverse",
+                                 breaks = seq(0, 20e3, 2e3),
+                                 labels = seq(0, 20, 2)) +
+                               scale_y_continuous(
+                                 limits = c(-0.1, 1.3),
+                                 breaks = seq(0, 1.3, 0.2))+
+                               coord_cartesian(xlim = c(age_treshold, 0)) +
+                               scale_color_manual(values =pallete_1)+
+                               theme_classic() +
+                               theme(
+                                 legend.position = "none",
+                                 text = element_text(size = text_size),
+                                 panel.border = element_rect(
+                                   fill = NA,
+                                   colour = "gray30",
+                                   size = 0.1)) +
+                               labs(x = "",
+                                    y= "")+
+                               geom_vline(
+                                 xintercept = seq(0,age_treshold,500),
+                                 color = "gray90",
+                                 size = 0.1)+
+                               geom_line(
+                                 data = data_lines,
+                                 aes(
+                                   x=AGE, 
+                                   y= ROC,
+                                   group=dataset.id),
+                                 alpha=1/10,
+                                 size = 0.1)+
+                               geom_point(
+                                 data = data_points,
+                                 aes(
+                                   x = BIN,
+                                   y= ROC_upq,
+                                   colour = REGION),
+                                 shape = 15,
+                                 size = 1)+
+                               geom_point(
+                                 data = data_points,
+                                 aes(
+                                   x = BIN,
+                                   y= ROC_median,
+                                   colour = REGION),
+                                 shape = 17,
+                                 size = 1)
+                             
+                             return(p_lines)
+                             
+                           }))
+
+FIGURE_S06 <-
+  ggarrange(plotlist = FIGURE_S06_plot_list$plot,
+            labels = LETTERS[1:6],
+            font.label = list(size = text_size),
+            nrow = 2, 
+            ncol= 3) %>% 
+  annotate_figure(bottom = text_grob("Age (ka) ", size = text_size),
+                  left = text_grob("ROC Score", size = text_size, rot = 90))
+
+ggsave(
+  "figures/FIGURE_S06.pdf",
+  FIGURE_S06,
+  width = 12,
+  height = 8,
+  units = "cm")
+
+
+

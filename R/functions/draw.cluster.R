@@ -1,7 +1,7 @@
-draw.cluster <-  function(region, cluster_method, distance) {
+draw.cluster <-  function( region, BIN_size = TIME_BIN, cluster_method, distance, ROC_metric = "ROC_MAIN" ) {
   
   data_w <- Dataset_work %>%
-    filter(REGION == region) %>%
+    dplyr::filter(REGION == region) %>%
     arrange(dataset.id) %>%
     na.omit()
   
@@ -63,8 +63,8 @@ draw.cluster <-  function(region, cluster_method, distance) {
   
   data_w_ROC <- 
     data_w %>%
-    unnest(c(ROC_MAIN)) %>%
-    mutate(BIN =  ceiling(AGE / 500) * 500) %>%
+    unnest(all_of(ROC_metric)) %>%
+    mutate(BIN =  ceiling(AGE / BIN_size) * BIN_size) %>%
     dplyr::select(REGION, cluster, BIN, ROC) %>%
     group_by(REGION, cluster, BIN) %>%
     summarise(
@@ -80,7 +80,7 @@ draw.cluster <-  function(region, cluster_method, distance) {
       data_w %>%
         arrange(dataset.id) %>%
         unnest(c(ROC_MAIN)) %>%
-        mutate(BIN =  ceiling(AGE / 500) * 500) %>%
+        mutate(BIN =  ceiling(AGE / BIN_size) * BIN_size) %>%
         dplyr::select(REGION, cluster, dataset.id, BIN, PEAK) %>%
         ungroup() %>%
         group_by(REGION, cluster, dataset.id, BIN) %>%
@@ -105,14 +105,14 @@ draw.cluster <-  function(region, cluster_method, distance) {
     group_by(cluster) %>%
     summarise(.groups = "drop",
               N = n()) %>%
-    filter(N >= 10) %>%
+    dplyr::filter(N >= 10) %>%
     mutate(C_char = as.character(cluster)) %>%
     mutate(data =  purrr::map(
       C_char,
       .f = function(x) {
         data_w_ROC_c <- 
           data_w_ROC  %>%
-          filter(cluster == as.character(x)) %>%
+          dplyr::filter(cluster == as.character(x)) %>%
           rename(N_samples = N.x,
                  ROC_upq = ROC_up)
         return(data_w_ROC_c)
@@ -173,7 +173,7 @@ draw.cluster <-  function(region, cluster_method, distance) {
   p2 <- 
     ggarrange(plotlist = cluster_result$Plot) %>%
     annotate_figure(
-      bottom = text_grob("Age (ka yr BP) ", size = text_size),
+      bottom = text_grob("Age (ka) ", size = text_size),
       left = text_grob("ROC Score, 95% quantile", size = text_size, rot = 90),
       right = text_grob(
         " Proportion of peak points",

@@ -223,11 +223,13 @@ draw.gam.custom <- function(data,
       rremove("xylab") + 
       annotation_custom(
         grob = p2_g,
-        xmin = 16e3,
-        xmax = 20e3,
-        ymin = 0.9,
+        xmin = -1.5e3,
+        xmax = -5e3,
+        ymin = 0.4,
         ymax = y_cut
       )
+    p3_a
+    
   } else {
     p3_a <- p3 + rremove("xylab")
   }

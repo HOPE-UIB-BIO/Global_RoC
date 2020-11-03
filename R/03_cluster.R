@@ -57,32 +57,32 @@ distance <-  "canberra"
 cluster_EU <- 
   draw.cluster(
     region = "Europe",
-    cluster_method, 
-    distance)
+    cluster_method = cluster_method, 
+    distance = distance)
 
 # North America
 cluster_NA <- 
   draw.cluster(
     region = "North America",
-    cluster_method,
-    distance)
+    cluster_method = cluster_method, 
+    distance = distance)
 
 # Latin America
 cluster_LA <- 
   draw.cluster(
     region = "Latin America",
-    cluster_method,
-    distance)
+    cluster_method = cluster_method, 
+    distance = distance)
 
 # Asia
 cluster_Asia <-
   draw.cluster(
     region = "Asia",
-    cluster_method,
-    distance)
+    cluster_method = cluster_method, 
+    distance = distance)
 
 #----------------------------------------------------------#
-# 4. Figure 3 -----
+# 4. Figure 3: Euroasia -----
 #----------------------------------------------------------#
 
 EUROASIA_map_data <-  
@@ -158,7 +158,7 @@ ggsave(
   units = "cm")
 
 #----------------------------------------------------------#
-# 4. Figure S4 -----
+# 4. Figure S4: Euroasia enviromental prop. -----
 #----------------------------------------------------------#
 
 FIGURE_S04  <- 
@@ -179,7 +179,7 @@ FIGURE_S04  <-
              Longitude = long,
              Elevation = elev,
              Mean_annual_temperature = MAT,
-             Temperature_seasionality = T.var,
+             Temperature_seasonality = T.var,
              Precipitation_of_the_driest_quatrer = Perc.dry,
              Precipitation_seasonality = Perc.var) %>%
       pivot_longer(cols = -c(C_comb)) %>%
@@ -320,7 +320,7 @@ FIGURE_S05 <-
         Longitude = long,
         Elevation = elev,
         Mean_annual_temperature = MAT,
-        Temperature_seasionality = T.var,
+        Temperature_seasonality = T.var,
         Precipitation_of_the_driest_quatrer = Perc.dry,
         Precipitation_seasonality = Perc.var
       ) %>%
@@ -351,3 +351,147 @@ ggsave(
   width = 17,
   height = 14,
   units = "cm")
+
+
+#----------------------------------------------------------#
+# 6. Sensitivity analyses -----
+#----------------------------------------------------------#
+
+TIME_BIN_sensitivity <-  250
+cluster_method <-  "mcquitty"
+distance <-  "canberra"
+
+
+# EUROPE
+cluster_EU_sens <- 
+  draw.cluster(
+    region = "Europe",
+    cluster_method = cluster_method, 
+    distance = distance,
+    BIN_size = TIME_BIN_sensitivity,
+    ROC_metric = "ROC_sens")
+
+# North America
+cluster_NA_sens <- 
+  draw.cluster(
+    region = "North America",
+    cluster_method = cluster_method, 
+    distance = distance,
+    BIN_size = TIME_BIN_sensitivity,
+    ROC_metric = "ROC_sens")
+
+# Latin America
+cluster_LA_sens <- 
+  draw.cluster(
+    region = "Latin America",
+    cluster_method = cluster_method, 
+    distance = distance,
+    BIN_size = TIME_BIN_sensitivity,
+    ROC_metric = "ROC_sens")
+# Asia
+cluster_Asia_sens <-
+  draw.cluster(
+    region = "Asia",
+    cluster_method = cluster_method, 
+    distance = distance,
+    BIN_size = TIME_BIN_sensitivity,
+    ROC_metric = "ROC_sens")
+
+Euroasia_translation_tibble <-
+  tibble(
+    original = LETTERS[1:7],
+    final = c("D","C","G","B","A","F","E"))
+
+
+Euroasia_model_tibble <-
+  bind_rows(tibble(
+    REGION = "Asia",
+    cluster_Asia$data_c),
+    tibble(
+      REGION = "Europe",
+      cluster_EU$data_c)) %>%
+  mutate(start_of_increase = purrr::map_dbl(pred_gam_ROC_upq,
+                                            possibly(extract.first.increase, otherwise=NA))) %>% 
+  mutate(Mod_explained = purrr::map_dbl(gam_ROC_upq,
+                                        possibly(extract.explained.variability, otherwise=NA))) %>% 
+  mutate(original = LETTERS[1:7]) %>% 
+  left_join(Euroasia_translation_tibble , by= "original") %>% 
+  rename(Cluster = final) %>% 
+  arrange(Cluster) %>% 
+  dplyr::select(REGION, Cluster, start_of_increase, Mod_explained)  
+
+Euroasia_model_tibble_sens <-
+  bind_rows(tibble(
+    REGION = "Asia",
+    cluster_Asia_sens$data_c),
+    tibble(
+      REGION = "Europe",
+      cluster_EU_sens$data_c)) %>%
+  mutate(start_of_increase = purrr::map_dbl(pred_gam_ROC_upq,
+                                            possibly(extract.first.increase, otherwise=NA))) %>% 
+  mutate(Mod_explained = purrr::map_dbl(gam_ROC_upq,
+                                        possibly(extract.explained.variability, otherwise=NA))) %>% 
+  mutate(original = LETTERS[1:7]) %>% 
+  left_join(Euroasia_translation_tibble , by= "original") %>% 
+  rename(Cluster = final) %>% 
+  arrange(Cluster) %>% 
+  dplyr::select(REGION, Cluster, start_of_increase, Mod_explained) %>% 
+  rename_if(is.double,~paste0(.,"_sens"))
+  
+
+Americas_translation_tibble <-
+  tibble(
+    original = LETTERS[1:6],
+    final = c("A","B","E","C","F","D"))
+
+Americas_model_tibble <-
+  bind_rows(tibble(
+    REGION = "North America",
+    cluster_NA$data_c),
+    tibble(
+      REGION = "Latin America",
+      cluster_LA$data_c)) %>%
+  mutate(start_of_increase = purrr::map_dbl(pred_gam_ROC_upq,
+                                            possibly(extract.first.increase, otherwise=NA))) %>% 
+  mutate(Mod_explained = purrr::map_dbl(gam_ROC_upq,
+                                        possibly(extract.explained.variability, otherwise=NA))) %>% 
+  mutate(original = LETTERS[1:6]) %>% 
+  left_join(Americas_translation_tibble , by= "original") %>% 
+  rename(Cluster = final) %>% 
+  arrange(Cluster) %>% 
+  dplyr::select(REGION, Cluster, start_of_increase, Mod_explained)  
+
+Americas_model_tibble_sens <-
+  bind_rows(tibble(
+    REGION = "North America",
+    cluster_NA_sens$data_c),
+    tibble(
+      REGION = "Latin America",
+      cluster_LA_sens$data_c)) %>%
+  mutate(start_of_increase = purrr::map_dbl(pred_gam_ROC_upq,
+                                            possibly(extract.first.increase, otherwise=NA))) %>% 
+  mutate(Mod_explained = purrr::map_dbl(gam_ROC_upq,
+                                        possibly(extract.explained.variability, otherwise=NA))) %>% 
+  mutate(original = LETTERS[1:6]) %>% 
+  left_join(Americas_translation_tibble , by= "original") %>% 
+  rename(Cluster = final) %>% 
+  arrange(Cluster) %>% 
+  dplyr::select(REGION, Cluster, start_of_increase, Mod_explained) %>% 
+  rename_if(is.double,~paste0(.,"_sens"))
+
+
+Cluster_model_tibble <-
+bind_rows(
+  Euroasia_model_tibble %>% 
+    left_join(Euroasia_model_tibble_sens,
+              by = c("REGION", "Cluster")),
+  Americas_model_tibble %>% 
+    left_join(Americas_model_tibble_sens,
+              by = c("REGION", "Cluster"))) %>% 
+  mutate(CLUSTER = ifelse(REGION == "Europe" | REGION == "Asia",
+                          paste0("Fig. 3",Cluster),
+                          paste0("Fig. 4",Cluster))) %>% 
+  dplyr::select(CLUSTER,start_of_increase,Mod_explained,start_of_increase_sens,Mod_explained_sens )
+
+
+write.csv(Cluster_model_tibble,"DATA/output/cluster_ROC_increase.csv")
