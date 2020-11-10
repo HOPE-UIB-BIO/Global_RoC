@@ -39,7 +39,7 @@ sapply(paste0("R/functions/", files.sources, sep =""), source)
 # 2. Import data and define variables -----
 #----------------------------------------------------------#
 
-Dataset_work <-  read_rds("DATA/input/Dataset_20201026.RDS")
+Dataset_work <-  read_rds("DATA/input/Dataset_20201110.RDS")
 
 # variabe definition
 age_treshold <-  20e3 

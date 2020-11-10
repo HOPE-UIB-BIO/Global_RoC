@@ -33,7 +33,7 @@ library(mgcv)
 # 2. Import data and define variables -----
 #----------------------------------------------------------#
 
-Dataset_work <-  read_rds("DATA/input/Dataset_20201026.RDS")
+Dataset_work <-  read_rds("DATA/input/Dataset_20201110.RDS")
 
 # variable definition
 text_size <-  7
@@ -66,19 +66,22 @@ region_coord <-
 
 Dataset_work %>%
   dplyr::select(dataset.id,
+                site.name,
                 lat,
                 long,
                 elev,
                 REGION,
-                DepEnvt,
+                pubs,
                 MAT,
                 T.var,
                 Perc.dry,
                 Perc.var) %>%
   rename(
+    Sequence_name = site.name,
     Latitude = lat,
     Longitude = long,
     Elevation = elev,
+    References = pubs,
     Mean_annual_temperature = MAT,
     Temperature_seasionality = T.var,
     Precipitation_of_the_driest_quatrer = Perc.dry,
