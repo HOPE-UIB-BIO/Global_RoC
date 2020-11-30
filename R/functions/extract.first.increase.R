@@ -3,6 +3,7 @@ extract.first.increase <- function(x) {
   first_sig <-
     x$first_deriv %>%
     filter(significante_change == T) %>%
+    filter(d_est < 0) %>% 
     dplyr::select(BIN) %>%
     min()
   

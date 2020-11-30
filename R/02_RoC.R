@@ -182,7 +182,7 @@ FIGURE_02 <-
     font.label = list(size = text_size) ) %>%
   annotate_figure(
     bottom = text_grob("Age (ka) ", size = text_size),
-    left = text_grob("ROC Score, 95% quantile", size = text_size, rot = 90),
+    left = text_grob("RoC Score, 95% quantile", size = text_size, rot = 90),
     right = text_grob(" Proportion of peak points", size = text_size, rot = -90) )
 
 
@@ -271,7 +271,7 @@ FIGURE_S01 <- ggarrange(
   font.label = list(size = text_size) ) %>%
   annotate_figure(
     bottom = text_grob("Age (ka) ", size = text_size),
-    left = text_grob("ROC Score, 95% quantile", size = text_size, rot = 90),
+    left = text_grob("RoC Score, 95% quantile", size = text_size, rot = 90),
     right = text_grob(" Proportion of peak points", size = text_size, rot = -90) )
 
 ggsave(
@@ -402,7 +402,7 @@ FIGURE_S02 <-
     font.label = list(size = text_size) ) %>%
   annotate_figure(
     bottom = text_grob("Age (ka) ", size = text_size),
-    left = text_grob("ROC Score, 95% quantile", size = text_size, rot = 90),
+    left = text_grob("RoC Score, 95% quantile", size = text_size, rot = 90),
     right = text_grob(" Proportion of peak points", size = text_size, rot = -90) )
 
 ggsave(
@@ -545,7 +545,7 @@ FIGURE_S03 <-
     font.label = list(size = text_size) ) %>%
   annotate_figure(
     bottom = text_grob("Age (ka) ", size = text_size),
-    left = text_grob("ROC Score, 95% quantile", size = text_size, rot = 90),
+    left = text_grob("RoC Score, 95% quantile", size = text_size, rot = 90),
     right = text_grob(" Proportion of peak points", size = text_size, rot = -90) )
 
 ggsave(
@@ -561,30 +561,34 @@ ggsave(
 
 region_ROC_increase <- 
   tibble(REGION = names(pallete_1), 
-         start_of_increase = c(extract.first.increase(P_NA$data_ROC),
-                              extract.first.increase(P_LA$data_ROC),
-                              extract.first.increase(P_EU$data_ROC),
-                              try(extract.first.increase(P_Afrika$data_ROC), silent = T),
-                              try(extract.first.increase(P_Asia$data_ROC), silent = T),
-                              extract.first.increase(P_Oceania$data_ROC)),
-         Mod_explained = c(try(extract.explained.variability(P_NA$model_ROC), silent = T),
-                           try(extract.explained.variability(P_LA$model_ROC), silent = T),
-                           try(extract.explained.variability(P_EU$model_ROC), silent = T),
-                           try(extract.explained.variability(P_Afrika$model_ROC), silent = T),
-                           try(extract.explained.variability(P_Asia$model_ROC), silent = T),
-                           try(extract.explained.variability(P_Oceania$model_ROC), silent = T)),
-         start_of_increase_sensitivity = c(extract.first.increase(P_NA_sensitivity$data_ROC),
-                                          extract.first.increase(P_LA_sensitivity$data_ROC),
-                                          extract.first.increase(P_EU_sensitivity$data_ROC),
-                                          extract.first.increase(P_Afrika_sensitivity$data_ROC),
-                                          extract.first.increase(P_Asia_sensitivity$data_ROC),
-                                          extract.first.increase(P_Oceania_sensitivity$data_ROC)),
-         Mod_explained_sens = c(extract.explained.variability(P_NA_sensitivity$model_ROC),
-                                extract.explained.variability(P_LA_sensitivity$model_ROC),
-                                extract.explained.variability(P_EU_sensitivity$model_ROC),
-                                extract.explained.variability(P_Afrika_sensitivity$model_ROC),
-                                extract.explained.variability(P_Asia_sensitivity$model_ROC),
-                                extract.explained.variability(P_Oceania_sensitivity$model_ROC))
+         start_of_increase = c(
+           try(extract.first.increase(P_NA$data_ROC),silent = T),
+           try(extract.first.increase(P_LA$data_ROC),silent = T),
+           try(extract.first.increase(P_EU$data_ROC),silent = T),
+           try(extract.first.increase(P_Afrika$data_ROC), silent = T),
+           try(extract.first.increase(P_Asia$data_ROC), silent = T),
+           try(extract.first.increase(P_Oceania$data_ROC),silent = T)),
+         Mod_explained = c(
+           try(extract.explained.variability(P_NA$model_ROC), silent = T),
+           try(extract.explained.variability(P_LA$model_ROC), silent = T),
+           try(extract.explained.variability(P_EU$model_ROC), silent = T),
+           try(extract.explained.variability(P_Afrika$model_ROC), silent = T),
+           try(extract.explained.variability(P_Asia$model_ROC), silent = T),
+           try(extract.explained.variability(P_Oceania$model_ROC), silent = T)),
+         start_of_increase_sensitivity = c(
+           try(extract.first.increase(P_NA_sensitivity$data_ROC),silent = T),
+           try(extract.first.increase(P_LA_sensitivity$data_ROC),silent = T),
+           try(extract.first.increase(P_EU_sensitivity$data_ROC),silent = T),
+           try(extract.first.increase(P_Afrika_sensitivity$data_ROC),silent = T),
+           try(extract.first.increase(P_Asia_sensitivity$data_ROC),silent = T),
+           try(extract.first.increase(P_Oceania_sensitivity$data_ROC),silent = T)),
+         Mod_explained_sens = c(
+           try(extract.explained.variability(P_NA_sensitivity$model_ROC),silent = T),
+           try(extract.explained.variability(P_LA_sensitivity$model_ROC),silent = T),
+           try(extract.explained.variability(P_EU_sensitivity$model_ROC),silent = T),
+           try(extract.explained.variability(P_Afrika_sensitivity$model_ROC),silent = T),
+           try(extract.explained.variability(P_Asia_sensitivity$model_ROC),silent = T),
+           try(extract.explained.variability(P_Oceania_sensitivity$model_ROC),silent = T))
   )
 
 write.csv(region_ROC_increase,"DATA/output/region_ROC_increase.csv")
