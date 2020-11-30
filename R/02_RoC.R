@@ -38,7 +38,7 @@ sapply(paste0("R/functions/", files.sources, sep = ""), source)
 # 2. Import data and define variables -----
 #----------------------------------------------------------#
 
-Dataset_work <-  read_rds("DATA/input/Dataset_20201110.RDS")
+Dataset_work <-  read_rds("DATA/input/Dataset_20201125.RDS")
 
 # variabe definition
 age_treshold <-  20e3
@@ -592,8 +592,6 @@ write.csv(region_ROC_increase,"DATA/output/region_ROC_increase.csv")
 #----------------------------------------------------------#
 # 8. Figure S06: Sequence distribution -----
 #----------------------------------------------------------#
-
-x = names(pallete_1)[1]
 
 FIGURE_S06_plot_list <-
   tibble(REGION = names(pallete_1)[c(1,3,5,2,4,6)]) %>% 
