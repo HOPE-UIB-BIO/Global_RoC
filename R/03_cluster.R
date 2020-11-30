@@ -47,7 +47,7 @@ ROC_treshold <-  2
 text_size <-  7
 TIME_BIN <-  500
 cluster_method <-  "mcquitty"
-distance <-  "canberra"
+distance <-  "manhattan"
 
 #----------------------------------------------------------#
 # 3. Estimate patterns per continent -----
@@ -146,7 +146,7 @@ EUROASIA_curve_plot  <-
   ggarrange(
     plotlist = EUROASIA_curves$Plot,
     ncol= 3,
-    nrow = 3,
+    nrow = 4,
     labels = LETTERS[1:nrow(EUROASIA_curves)],
     font.label = list(size=text_size))
 
@@ -286,7 +286,7 @@ AMERICAS_curve_plot <-
   ggarrange(
     plotlist = AMERICAS_curves$Plot,
     ncol= 3,
-    nrow = 2,
+    nrow = 4,
     labels = LETTERS[1:nrow(EUROASIA_curves)],
     font.label = list(size=text_size))
 
@@ -294,7 +294,7 @@ ggsave(
   "figures/FIGURE_04_B.pdf",
   AMERICAS_curve_plot,
   width = 12,
-  height = 6, 
+  height = 9, 
   units = "cm")
 
 #----------------------------------------------------------#
@@ -359,7 +359,7 @@ ggsave(
 
 TIME_BIN_sensitivity <-  250
 cluster_method <-  "mcquitty"
-distance <-  "canberra"
+distance <-  "manhattan"
 
 
 # EUROPE

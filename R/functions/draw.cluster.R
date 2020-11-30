@@ -25,7 +25,7 @@ draw.cluster <-  function( region, BIN_size = TIME_BIN, cluster_method, distance
     NbClust(
       .,
       min.nc = 3,
-      max.nc = min(c(nrow(data_w) - 1, 8)),
+      max.nc = min(c(nrow(data_w) - 1, 10)),
       method = cluster_method,
       distance = distance
     )
