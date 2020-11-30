@@ -136,7 +136,7 @@ fig_distribution_time <-
     labels = seq(0, 20, 4) ) +
   scale_fill_manual(values = pallete_1) +
   theme_bw() +
-  labs(x = "",
+  labs(x = "Sample distribution",
        y = "Age (ka)") +
   theme(
     legend.position = "none",
@@ -223,7 +223,7 @@ fig_env_1 <-
   coord_flip(xlim = c(20e3, -3e3),
              ylim = c(0, 1)) +
   labs(x = "Age (ka)",
-       y = "Intensive Agriculture") +
+       y = "intensive Agriculture") +
   theme_bw() +
   theme(
     text = element_text(size = text_size),
