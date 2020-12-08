@@ -31,8 +31,8 @@ predict.gam.values <- function(gam_model, var_x, deriv = F) {
     gam_model$formula %>%
     as.character(.) %>%
     .[3] %>%
-    sub(".*=", "", .) %>%
-    sub(")", "", .) %>%
+    str_extract(., "k = [:digit:]*") %>%
+    str_replace(., "k = ", "") %>%
     as.double(.)
   
   gam_model_summary <-

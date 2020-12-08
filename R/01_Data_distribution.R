@@ -33,11 +33,11 @@ library(mgcv)
 # 2. Import data and define variables -----
 #----------------------------------------------------------#
 
-Dataset_work <-  read_rds("DATA/input/Dataset_20201125.RDS")
+Dataset_work <-  read_rds("DATA/input/Dataset_20201203.RDS")
 
 # variable definition
 text_size <-  7
-TIME_BIN <-   500
+time_bin <-   500
 
 # Colour definition
 getPalette <-  colorRampPalette(brewer.pal(6, "Set2"))
@@ -103,15 +103,14 @@ Site_distribution <-
 Data_RoC  <- 
   Dataset_work %>%
   unnest(cols = c(ROC_MAIN)) %>%
-  mutate(BIN = ceiling(AGE / TIME_BIN) * TIME_BIN) %>%
-  dplyr::select(REGION, dataset.id, long, lat, elev, BIN, AGE, ROC, PEAK)
+  dplyr::select(REGION, dataset.id, long, lat, elev, Age, ROC, Peak)
 
 fig_distribution_time <- 
   Data_RoC %>%
   left_join(., Site_distribution, by = "REGION") %>%
-  ggplot(aes(x = reorder(REGION,-N), y = AGE)) +
+  ggplot(aes(x = reorder(REGION,-N), y = Age)) +
   geom_hline(
-    yintercept = c(4.2e3, 8.2e3, 11.7e3, 15e3),
+    yintercept = c(4.2e3, 8.2e3, 11.7e3, 17e3),
     color = "gray60",
     size = 0.1,
     lty = 1) +
@@ -200,7 +199,7 @@ fig_env_1 <-
   land_use %>%
   ggplot() +
   geom_vline(
-    xintercept = c(4.2e3, 8.2e3, 11.7e3, 15e3),
+    xintercept = c(4.2e3, 8.2e3, 11.7e3, 17e3),
     color = "gray60",
     size = 0.1,
     lty = 1) +
@@ -237,15 +236,15 @@ fig_env_2 <-
   ngrip %>%
   ggplot(aes(x = Age, y = var)) +
   geom_vline(
-    xintercept = c(4.2e3, 8.2e3, 11.7e3, 15e3),
+    xintercept = c(4.2e3, 8.2e3, 11.7e3, 17e3),
     color = "gray60",
     size = 0.1,
     lty = 1) +
   geom_line(aes(y = var), size = 0.1, colour = "gray30") +
   geom_text(
     data = data.frame(
-      Age = c(-2.5e3, 4.7e3, 8.7e3, 12.2e3, 15.5e3),
-      label = c("LH", "MH", "EH", "BA-YD", "FG") ),
+      Age = c(-2.5e3, 4.7e3, 8.7e3, 12.2e3, 17.5e3),
+      label = c("LH", "MH", "EH", "LG", "FG") ),
     aes(label = label, y = -10),
     color = "gray30",
     size = 2) +
@@ -270,7 +269,7 @@ fig_env_3 <-
   epica_CO2 %>%
   ggplot(aes(x = Age, y = var)) +
   geom_vline(
-    xintercept = c(4.2e3, 8.2e3, 11.7e3, 15e3),
+    xintercept = c(4.2e3, 8.2e3, 11.7e3, 17e3),
     color = "gray60",
     size = 0.1,
     lty = 1) +

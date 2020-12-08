@@ -1,14 +1,22 @@
-extract.first.increase <- function(x) {
+extract.first.increase <- function(x, nested = T) {
   
+  if (nested == T){
+    x <- x$data_ROC  
+  }
+  
+  y <- 
+    x$first_deriv %>% 
+    filter(BIN <= 10e3)
+    
   first_sig <-
-    x$first_deriv %>%
+    y %>%
     filter(significante_change == T) %>%
     filter(d_est < 0) %>% 
     dplyr::select(BIN) %>%
     min()
   
   age <-
-    x$first_deriv %>%
+    y %>%
     mutate(CHANGE = c(diff(significante_change), 0)) %>%
     filter(BIN > first_sig) %>%
     filter(CHANGE != 0) %>%

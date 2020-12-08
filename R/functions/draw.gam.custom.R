@@ -4,6 +4,7 @@ draw.gam.custom <- function(data,
                      region,
                      siluete = F,
                      blue_samples = F,
+                     plot_maxima = F,
                      palette_x = pallete_1,
                      deriv = F,
                      y_cut = 1.8,
@@ -12,8 +13,8 @@ draw.gam.custom <- function(data,
     ggplot() +
     scale_x_continuous(
       trans = "reverse",
-      breaks = seq(0, 20e3, 2e3),
-      labels = seq(0, 20, 2)
+      breaks = seq(0, 18e3, 2e3),
+      labels = seq(0, 18, 2)
     ) +
     coord_cartesian(xlim = c(age_treshold, 0)) +
     theme_classic() +
@@ -28,13 +29,37 @@ draw.gam.custom <- function(data,
     ) +
     labs(x = "Age (yr BP)")
   
+  if ( all(plot_maxima != F)){
+    p0 <-
+      p0 + 
+      geom_segment(
+        aes(
+          x = plot_maxima[1],
+          xend = plot_maxima[1],
+          y = plot_maxima[2] + 0.3,
+          yend = plot_maxima[2] + 0.1),
+        col = "gray30",
+        size = 0.2,
+        arrow = arrow(length = unit(0.05, "npc"))) +
+      geom_segment(
+        aes(
+          x = plot_maxima[3],
+          xend = plot_maxima[3],
+          y = plot_maxima[4] + 0.3,
+          yend = plot_maxima[4] + 0.1),
+        col = "gray30",
+        size = 0.2,
+        arrow = arrow(length = unit(0.05, "npc")))
+  }
+  
+  
   if (deriv == T) {
     # ROC
     
     p3 <- 
       p0 +
       geom_vline(
-        xintercept = seq(0, 20e3, 2e3),
+        xintercept = seq(0, 18e3, 2e3),
         color = "gray90",
         size = 0.1) +
       geom_ribbon(
@@ -67,7 +92,7 @@ draw.gam.custom <- function(data,
       )
     
     
-    if (is.na(pred_gam_up$first_deriv) == F) {
+    if (all(is.na(pred_gam_up$first_deriv) == F)) {
       rect_df_upq <-
         left_join(pred_gam_up$first_deriv, pred_gam_up$data, by = "BIN") %>%
         filter(significante_change == T)
@@ -118,7 +143,7 @@ draw.gam.custom <- function(data,
       )
     
     
-    if (is.na(pred_gam_pk$first_deriv) == F) {
+    if (all(is.na(pred_gam_pk$first_deriv) == F)) {
       rect_df_pk <-
         left_join(pred_gam_pk$first_deriv, pred_gam_pk$data, by = "BIN") %>%
         filter(significante_change == T)

@@ -39,40 +39,69 @@ sapply(paste0("R/functions/", files.sources, sep =""), source)
 # 2. Import data and define variables -----
 #----------------------------------------------------------#
 
-Dataset_work <-  read_rds("DATA/input/Dataset_20201125.RDS")
+Dataset_work <-  read_rds("DATA/input/Dataset_20201203.RDS")
 
 # variabe definition
-age_treshold <-  20e3 
+age_treshold <-  18e3 
 ROC_treshold <-  2 
 text_size <-  7
-TIME_BIN <-  500
+time_bin <-  500
 cluster_method <-  "mcquitty"
 distance <-  "manhattan"
+getPalette <-  colorRampPalette(brewer.pal(8, "Set2"))
 
 #----------------------------------------------------------#
 # 3. Estimate patterns per continent -----
 #----------------------------------------------------------#
 
 # EUROPE
-cluster_EU <- 
+cluster_Europe <- 
   draw.cluster(
     region = "Europe",
     cluster_method = cluster_method, 
     distance = distance)
 
+plot(cluster_Europe$plot)
+
+cluster_curves_Europe_merged <- 
+  calcuate.RoC.for.cluster(cluster_Europe$data_sites)
+
+
 # North America
-cluster_NA <- 
+cluster_North_America <- 
   draw.cluster(
     region = "North America",
     cluster_method = cluster_method, 
     distance = distance)
 
+plot(cluster_North_America$plot)
+
+cluster_curves_North_America <-
+  calcuate.RoC.for.cluster(cluster_North_America$data_sites)
+
+cluster_North_America_merged <-
+  cluster_North_America$data_sites %>%
+  mutate(cluster = as.character(cluster)) %>% 
+  mutate(
+    cluster = ifelse(cluster == "10", "3",cluster),
+    cluster = ifelse(cluster == "7", "3",cluster),
+    cluster = ifelse(cluster == "9", "3",cluster) ) %>% 
+  mutate(cluster = as.factor(cluster))
+
+cluster_curves_North_America_merged <-
+  calcuate.RoC.for.cluster(cluster_North_America_merged)
+
 # Latin America
-cluster_LA <- 
+cluster_Latin_America <- 
   draw.cluster(
     region = "Latin America",
     cluster_method = cluster_method, 
     distance = distance)
+
+plot(cluster_Latin_America$plot)
+  
+cluster_curves_Latin_America_merged <-
+  calcuate.RoC.for.cluster(cluster_Latin_America$data_sites)
 
 # Asia
 cluster_Asia <-
@@ -81,14 +110,20 @@ cluster_Asia <-
     cluster_method = cluster_method, 
     distance = distance)
 
+plot(cluster_Asia$plot)
+
+cluster_curves_Asia_merged <-
+  calcuate.RoC.for.cluster(cluster_Asia$data_sites)
+
+
 #----------------------------------------------------------#
 # 4. Figure 3: Euroasia -----
 #----------------------------------------------------------#
 
 EUROASIA_map_data <-  
   bind_rows(
-    cluster_Asia$data_sites,
-    cluster_EU$data_sites) %>%
+    cluster_curves_Asia_merged$data_sites,
+    cluster_curves_Europe_merged$data_sites) %>%
   mutate(C_comb = paste0(REGION,"-",cluster ) )
 
 Palette_Euroasia <- readRDS("DATA/input/Palettes/Palette_Euroasia.RDS")
@@ -120,27 +155,29 @@ ggsave(
   units = "cm")
 
 EUROASIA_curves  <-  
-  bind_rows(tibble(
-    REGION = "Asia",
-    cluster_Asia$data_c),
+  bind_rows(
+    tibble(
+      REGION = "Asia",
+      cluster_curves_Asia_merged$data_c),
     tibble(
       REGION = "Europe",
-      cluster_EU$data_c)) %>%
+      cluster_curves_Europe_merged$data_c)) %>%
   mutate(C_comb = paste0(REGION,"-",C_char ) ) %>%
-  mutate(Plot = purrr::pmap(list(data,
-                                 pred_gam_ROC_upq,
-                                 pred_gam_ROC_PEAK,
-                                 C_comb),
-                            .f=function(x,y,z,u){ 
-                              plot_res  <-   
-                                draw.gam.custom(x,y,z,
-                                                region =as.character(u),
-                                                siluete = F,
-                                                palette_x = Palette_Euroasia,
-                                                deriv = T,
-                                                y_cut=1.75)
-                              return(plot_res)
-                            }))
+  mutate(Plot = purrr::pmap(
+    list(data,
+         pred_gam_ROC_upq,
+         pred_gam_ROC_Peak,
+         C_comb),
+    .f=function(x,y,z,u){ 
+      plot_res  <-   
+        draw.gam.custom(x,y,z,
+                        region =as.character(u),
+                        siluete = F,
+                        palette_x = Palette_Euroasia,
+                        deriv = T,
+                        y_cut=1.75)
+      return(plot_res)
+    }))
 
 EUROASIA_curve_plot  <-
   ggarrange(
@@ -153,7 +190,7 @@ EUROASIA_curve_plot  <-
 ggsave(
   "figures/FIGURE_03_B.pdf",
   EUROASIA_curve_plot,
-  width = 12,
+  width = 9,
   height = 9,
   units = "cm")
 
@@ -223,8 +260,8 @@ ggsave(
 
 AMERICAS_map_data <-  
   bind_rows(
-    cluster_NA$data_sites,
-    cluster_LA$data_sites) %>%
+    cluster_curves_North_America_merged$data_sites,
+    cluster_curves_Latin_America_merged$data_sites) %>%
   mutate(C_comb = paste0(REGION,"-",cluster ) )
 
 Palette_Americas <- readRDS("DATA/input/Palettes/Palette_Americas.RDS")
@@ -260,25 +297,26 @@ ggsave(
   units = "cm")
 
 AMERICAS_curves <-  
-  bind_rows(tibble(
-    REGION = "North America",
-    cluster_NA$data_c),
+  bind_rows(
+    tibble(
+      REGION = "North America",
+      cluster_curves_North_America_merged$data_c),
     tibble(
       REGION = "Latin America",
-      cluster_LA$data_c)) %>%
+      cluster_curves_Latin_America_merged$data_c)) %>%
   mutate(C_comb = paste0(REGION,"-",C_char ) ) %>%
   mutate(Plot = purrr::pmap(list(
     data, 
     pred_gam_ROC_upq,
-    pred_gam_ROC_PEAK,
+    pred_gam_ROC_Peak,
     C_comb),
     .f=function(x,y,z,u){
       plot_res = draw.gam.custom(x,y,z,
-                               region =as.character(u),
-                               siluete = F,
-                               palette_x = Palette_Americas,
-                               deriv = T,
-                               y_cut=1.75)
+                                 region =as.character(u),
+                                 siluete = F,
+                                 palette_x = Palette_Americas,
+                                 deriv = T,
+                                 y_cut=1.75)
       return(plot_res)
     }))
 
@@ -287,13 +325,13 @@ AMERICAS_curve_plot <-
     plotlist = AMERICAS_curves$Plot,
     ncol= 3,
     nrow = 4,
-    labels = LETTERS[1:nrow(EUROASIA_curves)],
+    labels = LETTERS[1:nrow(AMERICAS_curves)],
     font.label = list(size=text_size))
 
 ggsave(
   "figures/FIGURE_04_B.pdf",
   AMERICAS_curve_plot,
-  width = 12,
+  width = 9,
   height = 9, 
   units = "cm")
 
@@ -354,68 +392,157 @@ ggsave(
 
 
 #----------------------------------------------------------#
-# 6. Sensitivity analyses -----
+# 7. Non-merged figure -----
 #----------------------------------------------------------#
 
-TIME_BIN_sensitivity <-  250
-cluster_method <-  "mcquitty"
-distance <-  "manhattan"
+AMERICAS_map_data_nonmerged <-  
+  bind_rows(
+    cluster_curves_North_America$data_sites,
+    cluster_curves_Latin_America_merged$data_sites) %>%
+  mutate(C_comb = paste0(REGION,"-",cluster ) )
 
+Palette_Americas_nonmerged <- 
+  AMERICAS_map_data_nonmerged$C_comb %>% 
+  unique() %>% 
+  length() %>% 
+  getPalette()
+
+names(Palette_Americas_nonmerged) <-
+  AMERICAS_map_data_nonmerged$C_comb %>% 
+  unique()
+
+AMERICAS_map_nonmerged <- 
+  AMERICAS_map_data_nonmerged %>%
+  ggplot(aes(x=long, y=lat))+
+  borders(fill = "gray90", colour = "gray90") +
+  coord_quickmap(xlim=c(min(AMERICAS_map_data$long),
+                        max(AMERICAS_map_data$long)),
+                 ylim = c(min(AMERICAS_map_data$lat),
+                          max(AMERICAS_map_data$lat)))+
+  geom_point(aes(
+    color=C_comb),
+    alpha=1,
+    size=0.5,
+    shape=20)+
+  theme_classic()+
+  scale_color_manual(values = Palette_Americas_nonmerged)+
+  labs(y= "latitude",
+       x= "longitude")+
+  theme(legend.position = "none",
+        axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(), 
+        axis.line = element_blank())
+
+AMERICAS_curves_nonmerged <-  
+  bind_rows(
+    tibble(
+      REGION = "North America",
+      cluster_curves_North_America$data_c),
+    tibble(
+      REGION = "Latin America",
+      cluster_curves_Latin_America_merged$data_c)) %>%
+  mutate(C_comb = paste0(REGION,"-",C_char ) ) %>%
+  mutate(Plot = purrr::pmap(list(
+    data, 
+    pred_gam_ROC_upq,
+    pred_gam_ROC_Peak,
+    C_comb),
+    .f=function(x,y,z,u){
+      plot_res = draw.gam.custom(x,y,z,
+                                 region =as.character(u),
+                                 siluete = F,
+                                 palette_x = Palette_Americas_nonmerged,
+                                 deriv = T,
+                                 y_cut=1.75)
+      return(plot_res)
+    }))
+
+AMERICAS_curve_plot_nonmerged <-  
+  ggarrange(
+    plotlist = AMERICAS_curves_nonmerged$Plot,
+    ncol= 3,
+    nrow = 4,
+    labels = LETTERS[1:nrow(AMERICAS_curves_nonmerged)],
+    font.label = list(size=text_size))
+
+FIGURE_S07 <- 
+ggarrange(
+  AMERICAS_map_nonmerged,
+  AMERICAS_curve_plot_nonmerged,
+  nrow = 1)
+
+ggsave(
+  "figures/FIGURE_S07.pdf",
+  FIGURE_S07,
+  width = 20,
+  height = 9,
+  units = "cm")
+
+
+
+#----------------------------------------------------------#
+# 8. Sensitivity analyses -----
+#----------------------------------------------------------#
+
+time_bin_sensitivity <-  250
 
 # EUROPE
-cluster_EU_sens <- 
-  draw.cluster(
-    region = "Europe",
-    cluster_method = cluster_method, 
-    distance = distance,
-    BIN_size = TIME_BIN_sensitivity,
+cluster_curves_Europe_sens <- 
+  calcuate.RoC.for.cluster(
+    cluster_Europe$data_sites,
+    bin_size = time_bin_sensitivity,
     ROC_metric = "ROC_sens")
 
 # North America
-cluster_NA_sens <- 
-  draw.cluster(
-    region = "North America",
-    cluster_method = cluster_method, 
-    distance = distance,
-    BIN_size = TIME_BIN_sensitivity,
+cluster_curves_North_America_sens <- 
+  calcuate.RoC.for.cluster(
+    cluster_North_America_merged,
+    bin_size = time_bin_sensitivity,
     ROC_metric = "ROC_sens")
 
 # Latin America
-cluster_LA_sens <- 
-  draw.cluster(
-    region = "Latin America",
-    cluster_method = cluster_method, 
-    distance = distance,
-    BIN_size = TIME_BIN_sensitivity,
+cluster_curves_Latin_America_sens <- 
+  calcuate.RoC.for.cluster(
+    cluster_Latin_America$data_sites,
+    bin_size = time_bin_sensitivity,
     ROC_metric = "ROC_sens")
+
 # Asia
-cluster_Asia_sens <-
-  draw.cluster(
-    region = "Asia",
-    cluster_method = cluster_method, 
-    distance = distance,
-    BIN_size = TIME_BIN_sensitivity,
+cluster_curves_Asia_sens <- 
+  calcuate.RoC.for.cluster(
+    cluster_Asia$data_sites,
+    bin_size = time_bin_sensitivity,
     ROC_metric = "ROC_sens")
+
+#----------------------------------------------------------#
+# 9. Model details tables -----
+#----------------------------------------------------------#
 
 Euroasia_translation_tibble <-
   tibble(
-    original = LETTERS[1:7],
-    final = c("D","C","G","B","A","F","E"))
+    original = LETTERS[1:nrow(EUROASIA_curves)],
+    final = c("D","I","J","B","A","C","E","H","F","G"))
 
 
 Euroasia_model_tibble <-
-  bind_rows(tibble(
-    REGION = "Asia",
-    cluster_Asia$data_c),
+  bind_rows(
+    tibble(
+      REGION = "Asia",
+      cluster_curves_Asia_merged$data_c),
     tibble(
       REGION = "Europe",
-      cluster_EU$data_c)) %>%
-  mutate(start_of_increase = purrr::map_dbl(pred_gam_ROC_upq,
-                                            possibly(extract.first.increase, otherwise=NA))) %>% 
-  mutate(Mod_explained = purrr::map_dbl(gam_ROC_upq,
-                                        possibly(extract.explained.variability, otherwise=NA))) %>% 
-  mutate(original = LETTERS[1:7]) %>% 
-  left_join(Euroasia_translation_tibble , by= "original") %>% 
+      cluster_curves_Europe_merged$data_c)) %>%
+  mutate(start_of_increase = purrr::map_dbl(
+    pred_gam_ROC_upq,
+    possibly(function(x) extract.first.increase(x, nested = F),
+             otherwise = NA))) %>% 
+  mutate(Mod_explained = purrr::map_dbl(
+    gam_ROC_upq,
+    possibly(function(x) extract.explained.variability(x, nested = F),
+             otherwise = NA))) %>% 
+  mutate(original = LETTERS[1:nrow(EUROASIA_curves)]) %>% 
+  left_join(Euroasia_translation_tibble, by= "original") %>% 
   rename(Cluster = final) %>% 
   arrange(Cluster) %>% 
   dplyr::select(REGION, Cluster, start_of_increase, Mod_explained)  
@@ -423,39 +550,47 @@ Euroasia_model_tibble <-
 Euroasia_model_tibble_sens <-
   bind_rows(tibble(
     REGION = "Asia",
-    cluster_Asia_sens$data_c),
+    cluster_curves_Asia_sens$data_c),
     tibble(
       REGION = "Europe",
-      cluster_EU_sens$data_c)) %>%
-  mutate(start_of_increase = purrr::map_dbl(pred_gam_ROC_upq,
-                                            possibly(extract.first.increase, otherwise=NA))) %>% 
-  mutate(Mod_explained = purrr::map_dbl(gam_ROC_upq,
-                                        possibly(extract.explained.variability, otherwise=NA))) %>% 
-  mutate(original = LETTERS[1:7]) %>% 
-  left_join(Euroasia_translation_tibble , by= "original") %>% 
+      cluster_curves_Europe_sens$data_c)) %>%
+  mutate(start_of_increase = purrr::map_dbl(
+    pred_gam_ROC_upq,
+    possibly(function(x) extract.first.increase(x, nested = F),
+             otherwise = NA))) %>% 
+  mutate(Mod_explained = purrr::map_dbl(
+    gam_ROC_upq,
+    possibly(function(x) extract.explained.variability(x, nested = F),
+             otherwise = NA))) %>% 
+  mutate(original = LETTERS[1:nrow(EUROASIA_curves)]) %>% 
+  left_join(Euroasia_translation_tibble, by= "original") %>% 
   rename(Cluster = final) %>% 
   arrange(Cluster) %>% 
-  dplyr::select(REGION, Cluster, start_of_increase, Mod_explained) %>% 
+  dplyr::select(REGION, Cluster, start_of_increase, Mod_explained)   %>% 
   rename_if(is.double,~paste0(.,"_sens"))
   
 
 Americas_translation_tibble <-
   tibble(
-    original = LETTERS[1:6],
-    final = c("A","B","E","C","F","D"))
+    original = LETTERS[1:nrow(AMERICAS_curves)],
+    final = c("H","I","A","B","C","G","F","J","D","E"))
 
 Americas_model_tibble <-
   bind_rows(tibble(
     REGION = "North America",
-    cluster_NA$data_c),
+    cluster_curves_North_America_merged$data_c),
     tibble(
       REGION = "Latin America",
-      cluster_LA$data_c)) %>%
-  mutate(start_of_increase = purrr::map_dbl(pred_gam_ROC_upq,
-                                            possibly(extract.first.increase, otherwise=NA))) %>% 
-  mutate(Mod_explained = purrr::map_dbl(gam_ROC_upq,
-                                        possibly(extract.explained.variability, otherwise=NA))) %>% 
-  mutate(original = LETTERS[1:6]) %>% 
+      cluster_curves_Latin_America_merged$data_c)) %>%
+  mutate(start_of_increase = purrr::map_dbl(
+    pred_gam_ROC_upq,
+    possibly(function(x) extract.first.increase(x, nested = F),
+             otherwise = NA))) %>% 
+  mutate(Mod_explained = purrr::map_dbl(
+    gam_ROC_upq,
+    possibly(function(x) extract.explained.variability(x, nested = F),
+             otherwise = NA))) %>% 
+  mutate(original = LETTERS[1:nrow(AMERICAS_curves)]) %>% 
   left_join(Americas_translation_tibble , by= "original") %>% 
   rename(Cluster = final) %>% 
   arrange(Cluster) %>% 
@@ -464,19 +599,23 @@ Americas_model_tibble <-
 Americas_model_tibble_sens <-
   bind_rows(tibble(
     REGION = "North America",
-    cluster_NA_sens$data_c),
+    cluster_curves_North_America_sens$data_c),
     tibble(
       REGION = "Latin America",
-      cluster_LA_sens$data_c)) %>%
-  mutate(start_of_increase = purrr::map_dbl(pred_gam_ROC_upq,
-                                            possibly(extract.first.increase, otherwise=NA))) %>% 
-  mutate(Mod_explained = purrr::map_dbl(gam_ROC_upq,
-                                        possibly(extract.explained.variability, otherwise=NA))) %>% 
-  mutate(original = LETTERS[1:6]) %>% 
+      cluster_curves_Latin_America_sens$data_c)) %>%
+  mutate(start_of_increase = purrr::map_dbl(
+    pred_gam_ROC_upq,
+    possibly(function(x) extract.first.increase(x, nested = F),
+             otherwise = NA))) %>% 
+  mutate(Mod_explained = purrr::map_dbl(
+    gam_ROC_upq,
+    possibly(function(x) extract.explained.variability(x, nested = F),
+             otherwise = NA))) %>% 
+  mutate(original = LETTERS[1:nrow(AMERICAS_curves)]) %>% 
   left_join(Americas_translation_tibble , by= "original") %>% 
   rename(Cluster = final) %>% 
   arrange(Cluster) %>% 
-  dplyr::select(REGION, Cluster, start_of_increase, Mod_explained) %>% 
+  dplyr::select(REGION, Cluster, start_of_increase, Mod_explained)   %>% 
   rename_if(is.double,~paste0(.,"_sens"))
 
 
@@ -491,7 +630,7 @@ bind_rows(
   mutate(CLUSTER = ifelse(REGION == "Europe" | REGION == "Asia",
                           paste0("Fig. 3",Cluster),
                           paste0("Fig. 4",Cluster))) %>% 
-  dplyr::select(CLUSTER,start_of_increase,Mod_explained,start_of_increase_sens,Mod_explained_sens )
+  dplyr::select(CLUSTER, start_of_increase, Mod_explained, start_of_increase_sens, Mod_explained_sens )
 
 
 write.csv(Cluster_model_tibble,"DATA/output/cluster_ROC_increase.csv")
