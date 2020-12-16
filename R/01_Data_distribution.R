@@ -222,7 +222,7 @@ fig_env_1 <-
   coord_flip(xlim = c(20e3, -3e3),
              ylim = c(0, 1)) +
   labs(x = "Age (ka)",
-       y = "intensive Agriculture") +
+       y = "Intensive agriculture") +
   theme_bw() +
   theme(
     text = element_text(size = text_size),
