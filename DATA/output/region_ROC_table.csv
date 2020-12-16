@@ -1,7 +1,7 @@
-"","REGION","start_of_increase","Mod_explained","holocene_max_time","holocene_max_roc","last_glacial_max_time","last_glacial_max_roc","roc_percentage_increase_in_holocene","Start_of_increase_sensitivity","Mod_explained_sensitivity"
-"1","North America",3300,0.93,500,0.69,12520,0.66,4.35,3100,0.75
-"2","Latin America",4600,0.43,1207,0.81,9338,0.86,-6.17,8000,0.11
-"3","Europe",3700,0.89,500,0.99,15702,0.85,14.14,6700,0.68
-"4","Africa",NA,0.37,500,0.79,9338,0.84,-6.33,NA,0.1
-"5","Asia",3700,0.47,500,0.75,8455,0.67,10.67,7500,0.13
-"6","Oceania",3100,0.94,500,0.72,11005,0.56,22.22,2000,0.9
+"","REGION","start_of_increase","Mod_explained","holocene_max_time","holocene_max_roc","last_glacial_max_time","last_glacial_max_roc","roc_percentage_increase_in_holocene"
+"1","North America",3300,0.93,500,0.69,12520,0.66,4.35
+"2","Latin America",4600,0.43,1207,0.81,9338,0.86,-6.17
+"3","Europe",3700,0.89,500,0.99,15702,0.85,14.14
+"4","Africa",NA,0.37,500,0.79,9338,0.84,-6.33
+"5","Asia",3700,0.47,500,0.75,8455,0.67,10.67
+"6","Oceania",2900,0.85,500,0.73,11005,0.51,30.14

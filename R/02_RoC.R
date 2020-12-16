@@ -284,15 +284,15 @@ region_ROC_table <-
       ( (holocene_max_roc - last_glacial_max_roc   ) / holocene_max_roc  ) * 100,
       digits = 2),
     
-    Start_of_increase_sensitivity = purrr::map_dbl(
-      sensitivity_plot_name, 
-      possibly(
-        function(x){extract.first.increase(get(x))},
-        NA_real_)),
-    
-    Mod_explained_sensitivity = purrr::map_dbl(
-      sensitivity_plot_name, 
-      function(x){extract.explained.variability(get(x))})
+    # Start_of_increase_sensitivity = purrr::map_dbl(
+    #   sensitivity_plot_name, 
+    #   possibly(
+    #     function(x){extract.first.increase(get(x))},
+    #     NA_real_)),
+    # 
+    # Mod_explained_sensitivity = purrr::map_dbl(
+    #   sensitivity_plot_name, 
+    #   function(x){extract.explained.variability(get(x))})
     
   ) %>% 
   dplyr::select(-c(plot_name,sensitivity_plot_name)) 
@@ -343,12 +343,6 @@ region_ROC_table %>%
         ) %>% 
           return()})) %>% 
   dplyr::select(REGION, final_plot)
-
-region = region_ROC_table$REGION[[1]]
-hol_time = region_ROC_table$holocene_max_time[[1]]
-hol_roc = region_ROC_table$holocene_max_roc[[1]]
-glac_time = region_ROC_table$last_glacial_max_time[[1]]
-glac_roc = region_ROC_table$last_glacial_max_roc[[1]]
 
 
 FIGURE_02 <- 
