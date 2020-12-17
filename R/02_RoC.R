@@ -3,7 +3,7 @@
 #
 #                 Global Rate-of-Change patterns
 #
-#                   RoC continetal patterns
+#                   RoC continental patterns
 #
 #                     Ondrej Mottl - 2020
 #
