@@ -9,59 +9,10 @@
 #
 #----------------------------------------------------------#
 
-#----------------------------------------------------------#
-# 1. Load libraries and functions -----
-#----------------------------------------------------------#
-
-# delete existing workspace to start clean
-rm(list = ls())
-
-# Package version control
-library(renv)
-# renv::init()
-# renv::snapshot(lockfile = "DATA/lock/revn.lock")
-renv::restore(lockfile = "DATA/lock/revn.lock")
-
-# libraries
-library(tidyverse)
-library(ggpubr)
-library(RColorBrewer)
-library(maps)
-library(mgcv)
-
-#----------------------------------------------------------#
-# 2. Import data and define variables -----
-#----------------------------------------------------------#
-
-Dataset_work <-  read_rds("DATA/input/Dataset_20201203.RDS")
-
-# variable definition
-text_size <-  7
-time_bin <-   500
-
-# Colour definition
-getPalette <-  colorRampPalette(brewer.pal(6, "Set2"))
-pallete_1 <-  getPalette(6)
-
-names(pallete_1) <-
-  c("North America",
-    "Latin America",
-    "Europe",
-    "Africa",
-    "Asia",
-    "Oceania")
-
-# region boundaries definition
-region_coord <- 
-  tibble(
-    REGION = names(pallete_1),
-    long_min = c(-165, -100, -8, -18, 40, 95),
-    long_max = c(-55, -37, 40, 50, 182, 175),
-    lat_min = c(25, -54, 38, -32, 11, -45),
-    lat_max = c(68, 25, 70, 35, 75, 10) )
+source("R/00_config.R")
 
 #-------------------------------------------#
-# 2.1 Export sites dataset -----
+# 1. Export sites dataset -----
 #-------------------------------------------#
 
 Dataset_work %>%
@@ -128,11 +79,11 @@ fig_distribution_time <-
     color = "gray30",
     size = 2,
     angle = 90) +
-  coord_cartesian(ylim = c(20e3, -3e3)) +
+  coord_cartesian(ylim = c(age_treshold, -3e3)) +
   scale_y_continuous(
     trans = "reverse",
-    breaks = seq(0, 20e3, 4e3),
-    labels = seq(0, 20, 4) ) +
+    breaks = seq(0, age_treshold, 4e3),
+    labels = seq(0, age_treshold/1e3, 4) ) +
   scale_fill_manual(values = pallete_1) +
   theme_bw() +
   labs(x = "Sample distribution",
@@ -175,21 +126,6 @@ fig_map <-
       colour = "gray30",
       size = 0.1) )
 
-#-------------------------------------------#
-# 3.1 Env Data -----
-#-------------------------------------------#
-ngrip <-  read.csv("DATA/input/NGRIP.csv")
-names(ngrip) <-  c("Age", "var")
-ngrip$Age <-  ngrip$Age - 50
-ngrip$var <-  ngrip$var - ngrip$var[1]
-
-land_use <-  read.csv("DATA/input/LandUse.csv")
-
-epica_CO2 <- 
-  read.csv("DATA/input/EPICACO2.csv", header = T) %>%
-  as_tibble()
-
-names(epica_CO2) <-  c("Depth", "Age", "var", "Sigma")
 
 
 #-------------------------------------------#
@@ -215,11 +151,11 @@ fig_env_1 <-
   geom_line(aes(y = fit, x = time), colour = "gray30", size = 0.1) +
   scale_x_continuous(
     trans = "reverse",
-    breaks = seq(0, 20e3, 4e3),
-    labels = seq(0, 20, 4)) +
+    breaks = seq(0, age_treshold, 4e3),
+    labels = seq(0, age_treshold/1e3, 4)) +
   scale_y_continuous(breaks = seq(0, 1),
                      labels = c("None", "Widespread")) +
-  coord_flip(xlim = c(20e3, -3e3),
+  coord_flip(xlim = c(age_treshold, -3e3),
              ylim = c(0, 1)) +
   labs(x = "Age (ka)",
        y = "Intensive agriculture") +
@@ -250,10 +186,10 @@ fig_env_2 <-
     size = 2) +
   scale_x_continuous(
     trans = "reverse",
-    breaks = seq(0, 20e3, 4e3),
-    labels = seq(0, 20, 4)) +
+    breaks = seq(0, age_treshold, 4e3),
+    labels = seq(0, age_treshold/1e3, 4)) +
   scale_y_continuous(breaks = seq(-12, 3, 3), limits = c(-12, 3)) +
-  coord_flip(xlim =  c(20e3, -3e3)) +
+  coord_flip(xlim =  c(age_treshold, -3e3)) +
   labs(x = "Age (ka)",
        y = expression(paste("δ" ^ 18, "O", " (‰)", sep = ""))) +
   theme_bw() +
@@ -276,10 +212,10 @@ fig_env_3 <-
   geom_line(aes(y = var), size = 0.1, colour = "gray30") +
   scale_x_continuous(
     trans = "reverse",
-    breaks = seq(0, 20e3, 4e3),
-    labels = seq(0, 20, 4) ) +
+    breaks = seq(0, age_treshold, 4e3),
+    labels = seq(0, age_treshold/1e3, 4)) +
   scale_y_continuous(breaks = seq(150, 300, 30)) +
-  coord_flip(xlim = c(20e3, -3e3),
+  coord_flip(xlim = c(age_treshold, -3e3),
              ylim = c(180, 300)) +
   labs(x = "Age (ka)",
        y = expression(paste("CO"[2], " (ppmv)"))) +

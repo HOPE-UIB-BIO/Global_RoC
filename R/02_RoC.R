@@ -9,66 +9,10 @@
 #
 #----------------------------------------------------------#
 
-#----------------------------------------------------------#
-# 1. Load libraries and functions -----
-#----------------------------------------------------------#
-
-# delete existing workspace to start clean
-rm(list = ls())
-
-# Package version control
-library(renv)
-# renv::init()
-# renv::snapshot(lockfile = "DATA/lock/revn.lock")
-renv::restore(lockfile = "DATA/lock/revn.lock")
-
-# libraries
-library(tidyverse)
-library(ggpubr)
-library(RColorBrewer)
-library(mgcv)
-library(gratia)
-
-# source scripts and functions
-files.sources = list.files("R/functions/")
-sapply(paste0("R/functions/", files.sources, sep = ""), source)
-
+source("R/00_config.R")
 
 #----------------------------------------------------------#
-# 2. Import data and define variables -----
-#----------------------------------------------------------#
-
-Dataset_work <-  read_rds("DATA/input/Dataset_20201203.RDS")
-
-# variabe definition
-age_treshold <-  18e3
-ROC_treshold <-  2
-text_size <-  7
-time_bin <-  500
-
-# Colour definition
-getPalette <-  colorRampPalette(brewer.pal(6, "Set2"))
-pallete_1 <-  getPalette(6)
-names(pallete_1) <-
-  c("North America",
-    "Latin America",
-    "Europe",
-    "Africa",
-    "Asia",
-    "Oceania")
-
-# region boundaries definition
-region_coord <- 
-  tibble(
-    REGION = names(pallete_1),
-    long_min = c(-165, -100, -8, -18, 40, 95),
-    long_max = c(-55, -37, 40, 50, 182, 175),
-    lat_min = c(25, -54, 38, -32, 11, -45),
-    lat_max = c(68, 25, 70, 35, 75, 10)
-  )
-
-#----------------------------------------------------------#
-# 3. Prepare dataset -----
+# 1. Prepare dataset -----
 #----------------------------------------------------------#
 
 Data_RoC <- 
@@ -110,7 +54,7 @@ Data_RoC_sum <-
 
 
 #----------------------------------------------------------#
-# 3. RoC per continent -----
+# 2. RoC per continent -----
 #----------------------------------------------------------#
 
 P_Africa <- 
@@ -151,10 +95,8 @@ P_Oceania <-
 
 
 #----------------------------------------------------------#
-# 3.1 Sensitivity analyses -----
+# 2.1 Sensitivity analyses -----
 #----------------------------------------------------------#
-
-time_bin_sensitivity <-  250
 
 Data_RoC_sensitivity  <-
   Dataset_work %>%
@@ -237,7 +179,7 @@ P_Oceania_sensitivity <-
               BIN_data = Data_RoC_sum_sensitivity)
 
 #----------------------------------------------------------#
-# 3.2 Estimate RoC values per continent -----
+# 2.2 Estimate RoC values per continent -----
 #----------------------------------------------------------#
 
 
@@ -301,9 +243,8 @@ region_ROC_table <-
 write.csv(region_ROC_table,"DATA/output/region_ROC_table.csv")
 
 #----------------------------------------------------------#
-# 3.3. Figure 02 : Roc per region ----- 
+# 2.3. Figure 02 : Roc per region ----- 
 #----------------------------------------------------------#
-
 
 Regional_curves_fin <-
 region_ROC_table %>% 
@@ -390,7 +331,7 @@ ggsave(
 
 
 #----------------------------------------------------------#
-# 4. Figure S01 : Sample density ----- 
+# 3. Figure S01 : Sample density ----- 
 #----------------------------------------------------------#
 
 P_Afrika_samples <- 
@@ -479,7 +420,7 @@ ggsave(
 )
 
 #----------------------------------------------------------#
-# 5. Figure S02 : sensitivity ----- 
+# 4. Figure S02 : sensitivity ----- 
 #----------------------------------------------------------#
 
 FIGURE_S02 <- 
@@ -526,7 +467,7 @@ ggsave(
 
 
 #----------------------------------------------------------#
-# 6. Figure S03 : Exclude rare taxa -----
+# 5. Figure S03 : Exclude rare taxa -----
 #----------------------------------------------------------#
 
 Data_RoC_common_taxa  <- 
@@ -669,7 +610,7 @@ ggsave(
 
 
 #----------------------------------------------------------#
-# 8. Figure S06: Sequence distribution -----
+# 6. Figure S06: Sequence distribution -----
 #----------------------------------------------------------#
 
 FIGURE_S06_plot_list <-
