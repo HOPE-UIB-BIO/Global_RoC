@@ -72,18 +72,6 @@
       "Repository": "CRAN",
       "Hash": "e031418365a7f7a766181ab5a41a5716"
     },
-    "RRatepol": {
-      "Package": "RRatepol",
-      "Version": "0.3.1",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "R-Ratepol-package",
-      "RemoteUsername": "HOPE-UIB-BIO",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "bf7f3dff8e721e96a3960082eec783980e301594",
-      "Hash": "5b0747047a5ba33af7550e63fb1f11a4"
-    },
     "Rcpp": {
       "Package": "Rcpp",
       "Version": "1.0.5",
