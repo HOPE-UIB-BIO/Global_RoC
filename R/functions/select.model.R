@@ -6,7 +6,7 @@ select.model <-   function(
   data,
   weights = NA) {
   
-  for (i in  seq(from=3,to= min(c(nrow(data) - 1, 100)), by=5) )    {
+  for (i in  seq(from = 8,to = min(c(nrow(data) - 1, 100)), by = 4) )    {
     
     print(paste("trying k=", i))
     
