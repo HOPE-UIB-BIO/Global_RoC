@@ -117,7 +117,7 @@ draw.gam.custom <- function(data,
         aes(x = BIN, y = ROC_upq, color = region),
         shape = 15,
         size = 1,
-        alpha = 0.5
+        alpha = 1 / 2
       )
     
     # peak point
@@ -172,7 +172,7 @@ draw.gam.custom <- function(data,
         ),
         shape = 0,
         size = 1,
-        alpha = 1 / 2
+        alpha = 1 /2
       )
     
     
