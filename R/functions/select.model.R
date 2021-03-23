@@ -10,7 +10,7 @@ select.model <-   function(
     
     print(paste("trying k=", i))
     
-    formula_w <- paste(var_y, "~ s(", var_x,", k=", i,",bs='tp')") #
+    formula_w <- paste(var_y, "~ s(", var_x,", k=", i,",bs='tp')") 
     
     if (is.na(weights) == F) {
       data <-
@@ -18,8 +18,7 @@ select.model <-   function(
         mutate(W = with(data, get(weights)))
       
     data$W <- (data$W / mean(data$W))+1
-    #data$W <- scales::rescale(data$W, to=c(1,10))
-    #data$W <- log(data$W+1)  
+   
     
     } else {
       data <-
