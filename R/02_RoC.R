@@ -692,7 +692,7 @@ FIGURE_S06 <-
             nrow = 2, 
             ncol= 3) %>% 
   annotate_figure(bottom = text_grob("Age (ka) ", size = text_size),
-                  left = text_grob("ROC Score", size = text_size, rot = 90))
+                  left = text_grob("RoC Score", size = text_size, rot = 90))
 
 ggsave(
   "figures/FIGURE_S06.pdf",
