@@ -377,7 +377,8 @@ P_Oceania_samples <-
     blue_samples = T)
 
 
-FIGURE_S01 <- ggarrange(
+FIGURE_S01 <- 
+  ggarrange(
   P_North_America_samples$plot + 
     theme(plot.margin = unit(c(0, 0, 0, 0), "lines")) +
     rremove("xylab") +
@@ -416,8 +417,7 @@ ggsave(
   FIGURE_S01,
   width = 12,
   height = 12,
-  units = "cm"
-)
+  units = "cm")
 
 #----------------------------------------------------------#
 # 4. Figure S02 : sensitivity ----- 
@@ -442,7 +442,7 @@ FIGURE_S02 <-
     P_Latin_America_sensitivity$plot + 
       theme(plot.margin = unit(c(0, 0, 0, 0), "lines")) +
       rremove("xylab"),
-    P_Afrika_sensitivity$plot + 
+    P_Africa_sensitivity$plot + 
       theme(plot.margin = unit(c(0, 0, 0, 0), "lines")) +
       rremove("xylab"),
     P_Oceania_sensitivity$plot + 
@@ -462,8 +462,7 @@ ggsave(
   FIGURE_S02,
   width = 12,
   height = 8,
-  units = "cm"
-)
+  units = "cm")
 
 
 #----------------------------------------------------------#
@@ -693,7 +692,7 @@ FIGURE_S06 <-
             nrow = 2, 
             ncol= 3) %>% 
   annotate_figure(bottom = text_grob("Age (ka) ", size = text_size),
-                  left = text_grob("ROC Score", size = text_size, rot = 90))
+                  left = text_grob("RoC Score", size = text_size, rot = 90))
 
 ggsave(
   "figures/FIGURE_S06.pdf",

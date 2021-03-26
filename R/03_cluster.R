@@ -60,7 +60,7 @@ cluster_Latin_America <-
     distance = distance)
 
 plot(cluster_Latin_America$plot)
-  
+
 cluster_curves_Latin_America_merged <-
   calcuate.RoC.for.cluster(cluster_Latin_America$data_sites)
 
@@ -425,10 +425,10 @@ AMERICAS_curve_plot_nonmerged <-
     font.label = list(size=text_size))
 
 FIGURE_S07 <- 
-ggarrange(
-  AMERICAS_map_nonmerged,
-  AMERICAS_curve_plot_nonmerged,
-  nrow = 1)
+  ggarrange(
+    AMERICAS_map_nonmerged,
+    AMERICAS_curve_plot_nonmerged,
+    nrow = 1)
 
 ggsave(
   "figures/FIGURE_S07.pdf",
@@ -524,7 +524,7 @@ Euroasia_model_tibble <-
 #   arrange(Cluster) %>% 
 #   dplyr::select(REGION, Cluster, start_of_increase, Mod_explained)   %>% 
 #   rename_if(is.double,~paste0(.,"_sens"))
-  
+
 
 Americas_translation_tibble <-
   tibble(
@@ -532,9 +532,10 @@ Americas_translation_tibble <-
     final = c("H","I","A","B","C","G","F","J","D","E"))
 
 Americas_model_tibble <-
-  bind_rows(tibble(
-    REGION = "North America",
-    cluster_curves_North_America_merged$data_c),
+  bind_rows(
+    tibble(
+      REGION = "North America",
+      cluster_curves_North_America_merged$data_c),
     tibble(
       REGION = "Latin America",
       cluster_curves_Latin_America_merged$data_c)) %>%
@@ -576,13 +577,13 @@ Americas_model_tibble <-
 
 
 Cluster_model_tibble <-
-bind_rows(
-  Euroasia_model_tibble %>% 
-    left_join(Euroasia_model_tibble_sens,
-              by = c("REGION", "Cluster")),
-  Americas_model_tibble %>% 
-    left_join(Americas_model_tibble_sens,
-              by = c("REGION", "Cluster"))) %>% 
+  bind_rows(
+    Euroasia_model_tibble %>% 
+      left_join(Euroasia_model_tibble_sens,
+                by = c("REGION", "Cluster")),
+    Americas_model_tibble %>% 
+      left_join(Americas_model_tibble_sens,
+                by = c("REGION", "Cluster"))) %>% 
   mutate(CLUSTER = ifelse(REGION == "Europe" | REGION == "Asia",
                           paste0("Fig. 3",Cluster),
                           paste0("Fig. 4",Cluster))) %>% 
@@ -594,8 +595,8 @@ Cluster_model_tibble <-
     Euroasia_model_tibble,
     Americas_model_tibble ) %>% 
   mutate(CLUSTER = ifelse(REGION == "Europe" | REGION == "Asia",
-                          paste0("Fig. 3",Cluster),
-                          paste0("Fig. 4",Cluster))) %>% 
+                          paste0("Fig. 3", Cluster),
+                          paste0("Fig. 4", Cluster))) %>% 
   dplyr::select(CLUSTER, start_of_increase, Mod_explained )
 
 

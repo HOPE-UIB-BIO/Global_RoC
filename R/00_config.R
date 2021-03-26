@@ -42,7 +42,7 @@ sapply(paste0("R/functions/", files.sources, sep = ""), source)
 #----------------------------------------------------------#
 
 Dataset_work <-  
-  read_rds("DATA/input/Dataset_20201203.RDS")
+  read_rds("DATA/input/Dataset_20210316.rds")
 
 
 #-------------------------------------------#
@@ -92,9 +92,9 @@ names(pallete_1) <-
     "Asia",
     "Oceania")
 
-Palette_Euroasia <- readRDS("DATA/input/Palettes/Palette_Euroasia.RDS")
+Palette_Euroasia <- read_rds("DATA/input/Palettes/Palette_Euroasia.rds")
 
-Palette_Americas <- readRDS("DATA/input/Palettes/Palette_Americas.RDS")
+Palette_Americas <- read_rds("DATA/input/Palettes/Palette_Americas.rds")
 
 
 #----------------------------------------------------------#
