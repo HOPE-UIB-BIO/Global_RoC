@@ -8,6 +8,7 @@ draw.gam.custom <- function(data,
                      palette_x = pallete_1,
                      deriv = F,
                      y_cut = 1.8,
+                     y_start = 0,
                      axis_ratio = 2) {
   p0 <- 
     ggplot() +
@@ -36,8 +37,8 @@ draw.gam.custom <- function(data,
         aes(
           x = plot_maxima[1],
           xend = plot_maxima[1],
-          y = plot_maxima[2] + 0.3,
-          yend = plot_maxima[2] + 0.1),
+          y = plot_maxima[2] + 0.12,
+          yend = plot_maxima[2] + 0.05),
         col = "gray30",
         size = 0.2,
         arrow = arrow(length = unit(0.05, "npc"))) +
@@ -45,8 +46,8 @@ draw.gam.custom <- function(data,
         aes(
           x = plot_maxima[3],
           xend = plot_maxima[3],
-          y = plot_maxima[4] + 0.3,
-          yend = plot_maxima[4] + 0.1),
+          y = plot_maxima[4] + 0.12,
+          yend = plot_maxima[4] + 0.05),
         col = "gray30",
         size = 0.2,
         arrow = arrow(length = unit(0.05, "npc")))
@@ -82,12 +83,12 @@ draw.gam.custom <- function(data,
       scale_color_manual(values = palette_x) +
       labs(y = "ROC Score, 95% quantile") +
       scale_y_continuous(
-        limits = c(-0.1, y_cut),
-        breaks = seq(0, y_cut, 0.4),
+        limits = c(y_start, y_cut),
+        breaks = seq(0, y_cut, 0.1),
         sec.axis =  sec_axis(
           name =  ,
-          ~ . / axis_ratio,
-          breaks = seq(0, y_cut, 0.2)
+          ~ (.  - y_start) / axis_ratio ,
+          breaks = seq(0, y_cut, 0.1)
         )
       )
     
@@ -128,16 +129,16 @@ draw.gam.custom <- function(data,
         data = pred_gam_pk$data,
         aes(
           x = BIN,
-          y = fit * axis_ratio,
-          ymin = lower * axis_ratio,
-          ymax = upper * axis_ratio
+          y = (fit  * axis_ratio ) + y_start,
+          ymin = (lower  * axis_ratio ) + y_start,
+          ymax = (upper  * axis_ratio ) + y_start
         ),
         fill = "gray80",
         size = 0.1,
         alpha = ifelse(pred_gam_pk$p < 0.05, 0.5, 0)) +
       geom_line(
         data = pred_gam_pk$data,
-        aes(x = BIN, y = fit * axis_ratio),
+        aes(x = BIN, y = (fit  * axis_ratio) + y_start ),
         lty = ifelse(pred_gam_pk$p < 0.05, 3, 2),
         size = 0.1
       )
@@ -153,7 +154,7 @@ draw.gam.custom <- function(data,
           p3 + 
           geom_point(
             data = rect_df_pk,
-            aes(x = BIN, y = fit * axis_ratio),
+            aes(x = BIN, y = (fit  * axis_ratio) + y_start),
             size = 0.1,
             color = "gray30",
             shape = 8
@@ -167,7 +168,7 @@ draw.gam.custom <- function(data,
         data = data,
         aes(
           x = BIN,
-          y = P_value_mean * axis_ratio,
+          y = (P_value_mean  * axis_ratio) + y_start,
           color = region
         ),
         shape = 0,
@@ -200,9 +201,9 @@ draw.gam.custom <- function(data,
         data = pred_gam_pk$data,
         aes(
           x = BIN,
-          y = fit * axis_ratio,
-          ymin = lower * axis_ratio,
-          ymax = upper * axis_ratio
+          y =( fit * axis_ratio) + y_start,
+          ymin = (lower * axis_ratio) + y_start,
+          ymax = (upper * axis_ratio) + y_start
         ),
         fill = "gray80",
         alpha = ifelse(pred_gam_pk$p < 0.05, 0.5, 0)) +
@@ -216,12 +217,12 @@ draw.gam.custom <- function(data,
       scale_color_manual(values = palette_x) +
       labs(y = "ROC Score, 95% quantile") +
       scale_y_continuous(
-        limits = c(-0.1, y_cut),
-        breaks = seq(0, y_cut, 0.2),
+        limits = c(y_start, y_cut),
+        breaks = seq(0, y_cut, 0.1),
         sec.axis =  sec_axis(
           name =  ,
-          ~ . / axis_ratio,
-          breaks = seq(0, y_cut, 0.2)
+          ~ (. - y_start) / axis_ratio ,
+          breaks = seq(0, y_cut, 0.1)
         )
       )
   }
