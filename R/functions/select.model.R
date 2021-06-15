@@ -6,7 +6,7 @@ select.model <-   function(
   data,
   weights = NA) {
   
-  for (i in  seq(from = 8,to = min(c(nrow(data) - 1, 100)), by = 4) )    {
+  for (i in  seq(from = 10,to = min(c(nrow(data) - 1, 100)), by = 5) ) { # 8 / 4
     
     print(paste("trying k=", i))
     
@@ -26,17 +26,23 @@ select.model <-   function(
         mutate(W = rep(1, nrow(data)))
     }
     
-    suppressWarnings(
-      gam_w <-
-        gam(
-          formula = as.formula(formula_w),
-          data = data,
-          family =  noquote(family),
-          weights = W,
-          method = "REML",
-          niterPQL = 50
-        )
-    )
+   try(
+     suppressWarnings(
+       gam_w <-
+         gam(
+           formula = as.formula(formula_w),
+           data = data,
+           family =  noquote(family),
+           weights = W,
+           method = "REML",
+           niterPQL = 50
+         )
+     ), silent = TRUE
+   )
+  
+    if(!exists("gam_w")){
+      break
+    }
     
     # save the result from the k.check fc
     f <- function(b,
@@ -47,12 +53,16 @@ select.model <-   function(
     
     suppressWarnings(basis <- f(gam_w))
     
+    gam_w_sucess <- gam_w
+    rm(gam_w)
+    
     if (is.na(basis[4]) == F) {
       if (basis[4] > 0.05) {
         break
       }
     }
     
+    
   }
-  return(gam_w)
+  return(gam_w_sucess)
 }
