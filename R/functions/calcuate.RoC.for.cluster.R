@@ -1,5 +1,7 @@
 calcuate.RoC.for.cluster <- function(data_w, bin_size = time_bin, ROC_metric = "ROC_MAIN" ){ 
   
+  
+  
   getPalette <-
     colorRampPalette(brewer.pal(min(8, length(
       levels(data_w$cluster)
@@ -26,7 +28,7 @@ calcuate.RoC.for.cluster <- function(data_w, bin_size = time_bin, ROC_metric = "
   
   data_w_ROC <- 
     data_w %>%
-    unnest(all_of(ROC_metric)) %>%
+    unnest(all_of(ROC_metric)) %>%  
     mutate(BIN =  ceiling(Age / bin_size) * bin_size) %>%
     dplyr::select(REGION, cluster, BIN, ROC) %>%
     group_by(REGION, cluster, BIN) %>%
@@ -42,7 +44,7 @@ calcuate.RoC.for.cluster <- function(data_w, bin_size = time_bin, ROC_metric = "
       .,
       data_w %>%
         arrange(dataset.id) %>%
-        unnest(c(ROC_MAIN)) %>%
+        unnest(all_of(ROC_metric)) %>%
         mutate(BIN =  ceiling(Age / bin_size) * bin_size) %>%
         dplyr::select(REGION, cluster, dataset.id, BIN, Peak) %>%
         ungroup() %>%
